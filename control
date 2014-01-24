@@ -1,0 +1,9 @@
+Package: me.devbug.subtlekodate
+Name: SubtleKoDate
+Depends: mobilesubstrate (>= 0.9.5000), firmware (>= 7.0), org.thebigboss.subtlelock7
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: Show valid ko_KR date format for SubtleLock
+Maintainer: deVbug
+Author: deVbug
+Section: Tweaks

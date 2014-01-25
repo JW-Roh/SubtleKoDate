@@ -11,8 +11,6 @@
 %hook SLTopView
 
 - (void)getDate {
-	//%orig;
-	
 	NSLocale *systemLocale = [NSLocale currentLocale];
 	
 	if ([systemLocale.localeIdentifier hasPrefix:@"ko"]) {
@@ -31,6 +29,8 @@
 		if (![dateLabel.text isEqualToString:dateString])
 			dateLabel.text = dateString;
 	}
+	else
+		%orig;
 }
 
 %end

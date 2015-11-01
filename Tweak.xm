@@ -1,37 +1,40 @@
 
-@interface SLTopView : UIView
+@interface SLLockScreenDateView : UIView
 + (id)sharedInstance;
-- (UILabel *)dateLabel;
-- (void)getDate;
+- (id)dateText;
+- (void)setDateString:(id)arg1;
+- (id)timeFont;
 @end
 
 
 
-NSLocale *systemLocale = nil;
-NSDateFormatter *dateFormat = nil;
+static NSLocale *systemLocale = nil;
+static NSDateFormatter *dateFormat = nil;
+static BOOL isKO = NO;
 
 
 %group SubtleHook
 
-%hook SLTopView
+%hook SLLockScreenDateView
 
-- (void)getDate {
-	systemLocale = [NSLocale currentLocale];
+- (void)updateLabels {
+	%orig;
 	
-	if ([systemLocale.localeIdentifier hasPrefix:@"ko"]) {
+	if (isKO) {
 		NSDate *today = [NSDate date];
 		
 		[dateFormat setLocale:systemLocale];
 		
 		NSString *dateString = [dateFormat stringFromDate:today];
 		
-		UILabel *dateLabel = [self dateLabel];
+		if (![self.dateText isEqualToString:dateString])
+			[self setDateString:dateString];
 		
-		if (![dateLabel.text isEqualToString:dateString])
-			dateLabel.text = dateString;
+		UILabel *_timeLabel = MSHookIvar<UILabel *>(self, "_timeLabel");
+		CGRect frame = _timeLabel.frame;
+		frame.size.width += 20.0f;
+		_timeLabel.frame = frame;
 	}
-	else
-		%orig;
 }
 
 %end
@@ -48,6 +51,8 @@ NSDateFormatter *dateFormat = nil;
 	[dateFormat setDateFormat:@"MMMM d일\nEEEE"];
 	[dateFormat setLocale:systemLocale];
 	
+	isKO = [systemLocale.localeIdentifier hasPrefix:@"ko"];
+	
 	%init(SubtleHook);
 	
 	%orig;
@@ -60,4 +65,5 @@ NSDateFormatter *dateFormat = nil;
 {
 	%init;
 }
+
 
